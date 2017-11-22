@@ -94,12 +94,14 @@ public class DetailsFragment extends Fragment {
     }
 
     private void askPermissionGrant() {
-        if (!wasContactPermissionGranted() || wasCameraPermissionGranted() || wasSmsPermissionGranted()) {
+        if (wasContactPermissionGranted() || wasCameraPermissionGranted() ||
+                wasSmsPermissionGranted() || wasMicrophonePermissionGranted()) {
             ActivityCompat.requestPermissions(getActivity(),
                     new String[]{
                             Manifest.permission.READ_CONTACTS,
-                            Manifest.permission.CAMERA,
-                            Manifest.permission.READ_SMS
+                            Manifest.permission.RECORD_AUDIO,
+                            Manifest.permission.READ_SMS,
+                            Manifest.permission.CAMERA
                     }, PERMISSION_REQ_CODE);
         }
     }
@@ -110,6 +112,10 @@ public class DetailsFragment extends Fragment {
 
     private boolean wasCameraPermissionGranted() {
         return ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED;
+    }
+
+    private boolean wasMicrophonePermissionGranted() {
+        return ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED;
     }
 
     private boolean wasSmsPermissionGranted() {

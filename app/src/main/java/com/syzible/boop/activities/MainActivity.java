@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.syzible.boop.R;
+import com.syzible.boop.fragments.main.CallFragment;
 import com.syzible.boop.fragments.main.ContactsFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -15,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        setFragment(getFragmentManager(), new ContactsFragment());
+        setFragment(getFragmentManager(), new CallFragment());
     }
 
     public static void setFragment(FragmentManager fragmentManager, Fragment fragment) {
