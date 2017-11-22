@@ -1,5 +1,8 @@
 package com.syzible.boop.objects;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by ed on 22/11/2017.
  */
@@ -7,6 +10,12 @@ package com.syzible.boop.objects;
 public class Contact {
     private String forename, surname, number;
     private long lastTimeRung;
+
+    public Contact(JSONObject o) throws JSONException {
+        this.forename = o.getString("forename");
+        this.surname = o.getString("surname");
+        this.number = o.getString("number");
+    }
 
     public Contact(String forename, String surname, String number) {
         this.forename = forename;

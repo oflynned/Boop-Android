@@ -13,10 +13,10 @@ import com.syzible.boop.R;
  * Created by ed on 22/11/2017.
  */
 
-public class PermissionsFragment extends Fragment {
+public class AboutFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-       return inflater.inflate(R.layout.fragment_onboarding_permissions, container, false);
+       return inflater.inflate(R.layout.fragment_onboarding_about, container, false);
     }
 }

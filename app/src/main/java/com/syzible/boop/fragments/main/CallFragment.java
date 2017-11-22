@@ -25,6 +25,13 @@ public class CallFragment extends Fragment {
         FloatingActionButton endCallButton = view.findViewById(R.id.end_call);
         endCallButton.setOnClickListener(v -> MainActivity.setFragment(getFragmentManager(), new ContactsFragment()));
 
+        FloatingActionButton microphoneButton = view.findViewById(R.id.toggle_microphone);
+        microphoneButton.setOnClickListener(v -> MainActivity.setFragment(getFragmentManager(), new ContactsFragment()));
+
+        FloatingActionButton cameraButton = view.findViewById(R.id.toggle_video);
+        cameraButton.setOnClickListener(v -> MainActivity.setFragment(getFragmentManager(), new ContactsFragment()));
+        cameraButton.setOnLongClickListener(null); // TODO should change to front/back camera
+
         return view;
     }
 }

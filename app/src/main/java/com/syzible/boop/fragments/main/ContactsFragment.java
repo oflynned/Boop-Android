@@ -11,14 +11,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.loopj.android.http.BaseJsonHttpResponseHandler;
+import com.syzible.boop.network.Endpoints;
+import com.syzible.boop.network.RestClient;
+import com.syzible.boop.persistence.LocalPrefs;
 import com.syzible.boop.ui.ContactItemDecoration;
 import com.syzible.boop.activities.MainActivity;
 import com.syzible.boop.R;
 import com.syzible.boop.objects.Contact;
+import com.syzible.boop.utils.JSONUtils;
 import com.syzible.boop.utils.TimeUtils;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import cz.msebera.android.httpclient.Header;
 
 /**
  * Created by ed on 22/11/2017.
@@ -40,8 +50,13 @@ public class ContactsFragment extends Fragment {
         recyclerView.addItemDecoration(new ContactItemDecoration(getActivity(), 16));
         recyclerView.setLayoutManager(layoutManager);
 
+        TextView userName = view.findViewById(R.id.contacts_header_title);
+        userName.setText(LocalPrefs.getFullName(getActivity()));
+
+        TextView userNumber = view.findViewById(R.id.contacts_header_number);
+        userNumber.setText(LocalPrefs.getPhoneNumber(getActivity()));
+
         generateContactsList();
-        setupAdapter();
 
         return view;
     }
@@ -53,20 +68,31 @@ public class ContactsFragment extends Fragment {
 
     private void generateContactsList() {
         contacts = new ArrayList<>();
+        RestClient.post(getActivity(), Endpoints.GET_USER_CONTACTS, JSONUtils.getIdPayload(getActivity()), new BaseJsonHttpResponseHandler<JSONArray>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, JSONArray response) {
+                for (int i = 0; i < response.length(); i++) {
+                    try {
+                        Contact contact = new Contact(response.getJSONObject(i));
+                        contacts.add(contact);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
 
-        Contact contact1 = new Contact("Alexey", "Kuznetsov", "+353 86 736 0400");
-        Contact contact2 = new Contact("Emma", "Sheeran", "+353 86 736 0401");
-        Contact contact3 = new Contact("Adrian", "Chojnacki", "+353 86 736 0402");
-        Contact contact4 = new Contact("Aaron", "Barry", "+353 86 736 0403");
-        Contact contact5 = new Contact("Maciej", "Grabowski", "+353 86 736 0404");
+                setupAdapter();
+            }
 
-        contact1.setLastTimeRung(System.currentTimeMillis());
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, JSONArray errorResponse) {
 
-        contacts.add(contact1);
-        contacts.add(contact2);
-        contacts.add(contact3);
-        contacts.add(contact4);
-        contacts.add(contact5);
+            }
+
+            @Override
+            protected JSONArray parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                return new JSONArray(rawJsonData);
+            }
+        });
     }
 
     public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHolder> {

@@ -13,31 +13,53 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.loopj.android.http.BaseJsonHttpResponseHandler;
 import com.syzible.boop.R;
+import com.syzible.boop.fragments.onboarding.AboutFragment;
 import com.syzible.boop.fragments.onboarding.DetailsFragment;
 import com.syzible.boop.fragments.onboarding.GreetingFragment;
-import com.syzible.boop.fragments.onboarding.PermissionsFragment;
 import com.syzible.boop.fragments.onboarding.ReadyToStartFragment;
 import com.syzible.boop.fragments.onboarding.VerifyFragment;
+import com.syzible.boop.network.Endpoints;
+import com.syzible.boop.network.RestClient;
+import com.syzible.boop.persistence.LocalPrefs;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import cz.msebera.android.httpclient.Header;
 
 public class OnboardingActivity extends AppCompatActivity {
 
-    private Fragment greetingFragment, detailsFragment, verifyFragment, permissionsFragment, readyToStartFragment;
-    private static final int NUM_PAGES = 5;
-    private int currentPage = 0;
+    private GreetingFragment greetingFragment;
+    private AboutFragment aboutFragment;
+    private DetailsFragment detailsFragment;
+    private VerifyFragment verifyFragment;
+    private ReadyToStartFragment readyToStartFragment;
 
+    private static final int NUM_PAGES = 4;
+    private int currentPage = 0;
     private int[] indicators;
+
+    private boolean hasAcceptedData = false;
+    private String forename, surname, number;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_onboarding);
 
+        if (!LocalPrefs.isFirstRunCompleted(this)) {
+            this.finish();
+            startActivity(new Intent(OnboardingActivity.this, MainActivity.class));
+        }
+
         greetingFragment = new GreetingFragment();
         detailsFragment = new DetailsFragment();
         verifyFragment = new VerifyFragment();
-        permissionsFragment = new PermissionsFragment();
+        aboutFragment = new AboutFragment();
         readyToStartFragment = new ReadyToStartFragment();
 
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -59,8 +81,8 @@ public class OnboardingActivity extends AppCompatActivity {
                 R.id.intro_indicator_0,
                 R.id.intro_indicator_1,
                 R.id.intro_indicator_2,
-                R.id.intro_indicator_3,
-                R.id.intro_indicator_4
+                R.id.intro_indicator_3
+                //R.id.intro_indicator_4
         };
 
         updateIndicators(currentPage);
@@ -88,6 +110,28 @@ public class OnboardingActivity extends AppCompatActivity {
                         colorList[position == NUM_PAGES - 1 ? position : position + 1]);
                 viewPager.setBackgroundColor(colorUpdate);
                 setUiBarColours(colorUpdate);
+
+                if (position == 2) {
+                    if (!detailsFragment.isReadyToProceed()) {
+                        viewPager.setCurrentItem(position);
+                    } else {
+                        if (!hasAcceptedData) {
+                            hasAcceptedData = true;
+
+                            forename = detailsFragment.getForename();
+                            surname = detailsFragment.getSurname();
+                            number = detailsFragment.getCountryCodeValue() + detailsFragment.getNumber();
+
+                            // send to server and send an SMS to the registered number
+                            // verifyPhoneNumber(number);
+
+                            saveLocalData();
+                            createUserAccount();
+
+                            viewPager.setCurrentItem(position + 1);
+                        }
+                    }
+                }
             }
 
             @Override
@@ -114,6 +158,69 @@ public class OnboardingActivity extends AppCompatActivity {
 
     }
 
+    private void saveLocalData() {
+        LocalPrefs.setStringPref(LocalPrefs.Pref.forename, forename, this);
+        LocalPrefs.setStringPref(LocalPrefs.Pref.surname, surname, this);
+        LocalPrefs.setStringPref(LocalPrefs.Pref.phone_number, number, this);
+        LocalPrefs.setBooleanPref(LocalPrefs.Pref.first_run_completed, true, this);
+    }
+
+    private void createUserAccount() {
+        JSONObject o = new JSONObject();
+
+        try {
+            o.put("forename", forename);
+            o.put("surname", surname);
+            o.put("number", number);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        RestClient.post(this, Endpoints.CREATE_USER, o, new BaseJsonHttpResponseHandler<JSONObject>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, JSONObject response) {
+                System.out.println(rawJsonResponse);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, JSONObject errorResponse) {
+
+            }
+
+            @Override
+            protected JSONObject parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                return new JSONObject(rawJsonData);
+            }
+        });
+    }
+
+    private void verifyPhoneNumber(String number) {
+        JSONObject o = new JSONObject();
+
+        try {
+            o.put("number", number);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        RestClient.post(this, Endpoints.VERIFY_PHONE_NUMBER, o, new BaseJsonHttpResponseHandler<JSONObject>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, JSONObject response) {
+                Toast.makeText(OnboardingActivity.this, rawJsonResponse, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, JSONObject errorResponse) {
+
+            }
+
+            @Override
+            protected JSONObject parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                return new JSONObject(rawJsonData);
+            }
+        });
+    }
+
     private void setUiBarColours(int colour) {
         getWindow().setNavigationBarColor(colour);
         getWindow().setStatusBarColor(colour);
@@ -138,12 +245,12 @@ public class OnboardingActivity extends AppCompatActivity {
                 case 0:
                     return greetingFragment;
                 case 1:
-                    return detailsFragment;
+                    return aboutFragment;
                 case 2:
-                    return verifyFragment;
+                    return detailsFragment;
                 case 3:
-                    return permissionsFragment;
-                case 4:
+                    //return verifyFragment;
+                    //case 4:
                     return readyToStartFragment;
             }
 

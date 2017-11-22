@@ -45,7 +45,7 @@
             android:layout_below="@+id/input_layout_surname">
 
             <Spinner
-                android:id="@+id/onboarding_call_country_code"
+                android:id="@+id/onboarding_country_code"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="3" />
@@ -57,9 +57,10 @@
                 android:layout_weight="7">
 
                 <EditText
-                    android:id="@+id/input_password"
+                    android:id="@+id/input_user_number"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:inputType="number"
                     android:hint="Number" />
 
             </android.support.design.widget.TextInputLayout>

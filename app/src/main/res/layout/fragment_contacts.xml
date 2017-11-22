@@ -29,6 +29,7 @@
                 android:textSize="24sp" />
 
             <TextView
+                android:id="@+id/contacts_header_number"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/contacts_header_title"
