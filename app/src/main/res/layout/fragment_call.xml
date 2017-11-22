@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.syzible.boop.activities.MainActivity">
+
+    <!--
+    <VideoView
+        android:id="@+id/stream_holder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />-->
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/end_call"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="16dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/ic_end_call"
+        android:tint="#FFFFFF" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/toggle_microphone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="16dp"
+        android:layout_toStartOf="@+id/end_call"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/ic_mic_off"
+        android:tint="#FFFFFF"  />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/toggle_video"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="16dp"
+        android:layout_toEndOf="@+id/end_call"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/ic_video_off"
+        android:tint="#FFFFFF"  />
+
+</RelativeLayout>
