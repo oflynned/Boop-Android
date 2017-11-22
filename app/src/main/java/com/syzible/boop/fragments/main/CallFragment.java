@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 
 import com.otaliastudios.cameraview.CameraView;
+import com.otaliastudios.cameraview.Facing;
 import com.syzible.boop.R;
 import com.syzible.boop.activities.MainActivity;
 
@@ -20,6 +21,7 @@ import com.syzible.boop.activities.MainActivity;
 public class CallFragment extends Fragment {
 
     private CameraView cameraView;
+    private boolean isFront = true;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -37,13 +39,24 @@ public class CallFragment extends Fragment {
         endCallButton.setOnClickListener(v -> MainActivity.setFragment(getFragmentManager(), new ContactsFragment()));
 
         FloatingActionButton microphoneButton = view.findViewById(R.id.toggle_microphone);
-        microphoneButton.setOnClickListener(v -> MainActivity.setFragment(getFragmentManager(), new ContactsFragment()));
+        microphoneButton.setOnClickListener(v ->  {
+
+        });
 
         FloatingActionButton cameraButton = view.findViewById(R.id.toggle_video);
-        cameraButton.setOnClickListener(v -> MainActivity.setFragment(getFragmentManager(), new ContactsFragment()));
-        cameraButton.setOnLongClickListener(null); // TODO should change to front/back camera
+        cameraButton.setOnClickListener(v -> {
+            isFront = !isFront;
+            cameraView.setFacing(isFront ? Facing.FRONT : Facing.BACK);
+        });
+
+        cameraButton.setOnLongClickListener(videoViewButton -> {
+            isFront = !isFront;
+            cameraView.setFacing(isFront ? Facing.FRONT : Facing.BACK);
+            return false;
+        });
 
         cameraView = view.findViewById(R.id.stream_holder);
+        cameraView.setFacing(Facing.FRONT);
 
         return view;
     }
