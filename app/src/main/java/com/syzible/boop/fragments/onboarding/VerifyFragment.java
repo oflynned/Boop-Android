@@ -14,9 +14,13 @@ import com.syzible.boop.R;
  */
 
 public class VerifyFragment extends Fragment {
+    private boolean wasUserVerified = false;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-       return inflater.inflate(R.layout.fragment_onboarding_verify, container, false);
+        View view = inflater.inflate(R.layout.fragment_onboarding_verify, container, false);
+
+        return view;
     }
 }

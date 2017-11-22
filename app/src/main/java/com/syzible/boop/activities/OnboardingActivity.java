@@ -49,10 +49,10 @@ public class OnboardingActivity extends AppCompatActivity {
         Button finishButton = findViewById(R.id.intro_btn_finish);
 
         int color1 = ContextCompat.getColor(this, R.color.blue500);
-        int color2 = ContextCompat.getColor(this, R.color.green500);
+        int color2 = ContextCompat.getColor(this, R.color.blue500);
         int color3 = ContextCompat.getColor(this, R.color.purple500);
         int color4 = ContextCompat.getColor(this, R.color.green500);
-        int color5 = ContextCompat.getColor(this, R.color.blue500);
+        int color5 = ContextCompat.getColor(this, R.color.green500);
 
         int[] colorList = new int[]{color1, color2, color3, color4, color5};
         indicators = new int[]{
